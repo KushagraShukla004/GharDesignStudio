@@ -48,7 +48,8 @@ Migration notes for whoever does it:
 - 3D model input is already present: each room's `size` stores **metres** alongside feet
   (e.g. `"12'0\" x 18'5\" (3.65 x 5.61 m)"`). Parse the metric pair to size room boxes.
   Rooms with empty `size` (balconies) have no dimensions — handle gracefully.
-- Wall material colour <- `state.bible.colors` (COLORS/customColors carry `hex`).
+- Wall material colour <- `state.bible.wall` (single key; COLORS/customColors carry `hex`).
+  Empty `wall` = no explicit choice, pick a neutral. Accent colours <- `state.bible.colors`.
   Light temperature/intensity <- `state.bible.light` (LIGHTS/customLights; presets imply ~4000K
   bright / ~3000K soft / dim cozy).
 - Once on Vite, constraint 1 relaxes (build step is fine). Constraints 2–5 still hold.
@@ -82,7 +83,8 @@ casual/Hinglish notes like a professional and fill gaps tastefully.
 state = {
   bible: {
     vibe: "hotel",                 // single key into VIBES
-    colors: ["cream","white",...], // keys into COLORS + customColors
+    wall: "white",                 // single background-wall colour key into COLORS + customColors ("" = designer decides)
+    colors: ["cream","wood",...],  // ACCENT/aesthetic colours: keys into COLORS + customColors
     light: "soft",                 // single key into LIGHTS + customLights
     avoid: ["gloss",...],          // keys into AVOIDS + customAvoid
     notes: "",
@@ -92,6 +94,7 @@ state = {
   },
   house: { globals, climate, area, plan /* base64 jpeg */ },
   camera: "<camera/quality string>",
+  aspect: "landscape",            // output orientation: landscape|portrait|square (buildFresh adds an OUTPUT IMAGE line)
   customReqs: [{k,label,en,custom:true}],  // global, shared across rooms
   rooms: [{
     name, size, windows, sun, fixed,

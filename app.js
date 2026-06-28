@@ -61,6 +61,14 @@ const COLORS = [
   { k: "blue", label: "Soft blue", hex: "#aec4d4", en: "soft muted blue" },
   { k: "green", label: "Green", hex: "#9aa886", en: "sage green" },
   { k: "wgrey", label: "Warm grey", hex: "#b3a596", en: "warm greige" },
+  { k: "charcoal", label: "Charcoal", hex: "#3a3a3c", en: "charcoal grey" },
+  { k: "taupe", label: "Taupe", hex: "#9c8d7d", en: "taupe" },
+  { k: "terracotta", label: "Terracotta", hex: "#c06a4a", en: "terracotta" },
+  { k: "mustard", label: "Mustard", hex: "#c89b3c", en: "muted mustard yellow" },
+  { k: "olive", label: "Olive", hex: "#6f6f4a", en: "olive green" },
+  { k: "navy", label: "Navy", hex: "#2f3e57", en: "deep navy blue" },
+  { k: "teal", label: "Teal", hex: "#2f6f6a", en: "deep teal" },
+  { k: "blush", label: "Blush pink", hex: "#e0b9b4", en: "dusty blush pink" },
   { k: "black", label: "Black touch", hex: "#2b2b2b", en: "black accents" },
 ];
 const LIGHTS = [
@@ -126,8 +134,9 @@ const DESIGNER =
 /* ---------- defaults ---------- */
 const DEFAULTS = {
   bible: {
-    vibe: "hotel",
-    colors: ["cream", "white", "wood", "beige", "black"],
+    vibe: "modern",
+    wall: "white",
+    colors: ["cream", "wood", "beige", "black"],
     light: "soft",
     avoid: ["gloss", "clutter", "decor", "pop"],
     notes: "",
@@ -138,11 +147,12 @@ const DEFAULTS = {
   house: {
     globals:
       "Keep all structural walls unchanged. Never move the bathrooms or the kitchen. Keep all room sizes and window positions realistic. Always leave enough walking space.",
-    climate: "Gurgaon climate, family home",
+    climate: "Greater Noida climate, family home",
     area: "Total area 1850 sq.ft · Carpet area 1240 sq.ft",
     plan: "",
   },
   camera: CAMERA,
+  aspect: "landscape",
   customReqs: [],
   rooms: [
     {
@@ -196,7 +206,7 @@ const DEFAULTS = {
       sun: "",
       fixed: "Attached dress (5'4\"x8'8\"), toilet aur balcony saath mein",
       reqs: ["wardrobe", "curtains", "softlight"],
-      free: "Hotel jaisa suite feel.",
+      free: "Modern Ghar jesa feel",
       refs: [],
       log: [],
     },
@@ -446,6 +456,17 @@ function renderBible() {
     },
   );
   renderChoiceChips(
+    "#wallChips",
+    allColors(),
+    (k) => b.wall === k,
+    (k) => {
+      b.wall = b.wall === k ? "" : k;
+      save();
+      renderBible();
+    },
+    delCustomColor,
+  );
+  renderChoiceChips(
     "#colorChips",
     allColors(),
     (k) => b.colors.includes(k),
@@ -490,6 +511,7 @@ function delCustomColor(k) {
   const b = state.bible;
   b.customColors = (b.customColors || []).filter((c) => c.k !== k);
   b.colors = b.colors.filter((x) => x !== k);
+  if (b.wall === k) b.wall = "";
   save();
   renderBible();
 }
@@ -567,9 +589,13 @@ function bibleEnglish() {
     lines = [];
   const v = VIBES.find((x) => x.k === b.vibe);
   if (v) lines.push("Style: " + v.en);
+  const ac = allColors();
+  if (b.wall) {
+    const w = ac.find((x) => x.k === b.wall);
+    if (w) lines.push("Wall colour: " + w.en + " on the main background walls");
+  }
   if (b.colors.length) {
     const hasBlack = b.colors.includes("black");
-    const ac = allColors();
     const names = b.colors
       .filter((k) => k !== "black")
       .map((k) => {
@@ -577,7 +603,7 @@ function bibleEnglish() {
         return c ? c.en : null;
       })
       .filter(Boolean);
-    let s = "Colours: " + (names.join(", ") || "neutral tones");
+    let s = "Accent colours: " + (names.join(", ") || "neutral tones");
     if (hasBlack) s += ", with black accents only";
     lines.push(s);
   }
@@ -914,6 +940,11 @@ $("#w_free").addEventListener("input", () => {
 });
 $("#useCamera").addEventListener("change", buildFresh);
 $("#useLock").addEventListener("change", buildFresh);
+$("#aspect").addEventListener("change", () => {
+  state.aspect = $("#aspect").value;
+  save();
+  buildFresh();
+});
 function renderRefs() {
   const r = state.rooms[activeWorkRoom],
     wrap = $("#refList");
@@ -973,6 +1004,20 @@ function buildFresh() {
   const hb = houseBlock(r);
   if (hb) parts.push("\nHOUSE CONTEXT\n" + hb);
   parts.push("\nROOM: " + (r.name || "this room"));
+  if (state.house.plan)
+    parts.push(
+      "\nFLOOR PLAN (Image 1)\n" +
+        "The attached floor plan (Image 1) is the exact, authoritative layout of my home. " +
+        "Locate the " +
+        (r.name || "this room") +
+        " in this plan and render only that room from inside. " +
+        "Keep its exact shape, proportions, wall positions, door openings and window positions as drawn. " +
+        "If the plan shows an attached dress area, toilet or balcony opening off this room, keep them exactly as drawn — " +
+        "treat them as part of this room, do not turn them into separate rooms, and do not add, remove, merge or move any walls or spaces. " +
+        "If there is an attached dress area, angle the camera so its entrance/opening is visible in the frame. " +
+        "Important: this floor plan is a flat top-down layout reference only — use it for room shape, walls and openings, " +
+        "but do NOT copy its 2D look, orientation or aspect ratio into the result. Produce a normal eye-level interior photograph.",
+    );
   const RMAP = reqMap();
   const reqs = (r.reqs || []).map((k) => RMAP[k]).filter(Boolean);
   if (reqs.length) parts.push("Should include:\n- " + reqs.join("\n- "));
@@ -987,11 +1032,35 @@ function buildFresh() {
           .join("\n") +
         "\nFit these into my layout (Image 1 is my floor plan). Adjust to my room — do not copy their dimensions.",
     );
-  if ($("#useLock").checked) parts.push("\n" + LOCK);
+  if ($("#useLock").checked)
+    parts.push(
+      "\n" +
+        LOCK +
+        (state.house.plan
+          ? " Match the attached floor plan (Image 1) exactly."
+          : ""),
+    );
   if ($("#useCamera").checked && esc(state.camera))
     parts.push("\nCAMERA & QUALITY\n" + esc(state.camera));
+  const ASPECTS = {
+    landscape:
+      "OUTPUT IMAGE\nProduce a wide 16:9 widescreen landscape photograph, horizontal orientation (do not output a tall/portrait image).",
+    portrait:
+      "OUTPUT IMAGE\nProduce a vertical portrait photograph, 2:3 aspect ratio.",
+    square: "OUTPUT IMAGE\nProduce a square photograph, 1:1 aspect ratio.",
+  };
+  parts.push("\n" + (ASPECTS[state.aspect] || ASPECTS.landscape));
   parts.push("\nGenerate a photorealistic architectural render of this room.");
   $("#freshOut").textContent = parts.join("\n");
+  const reminder = $("#planReminder");
+  if (reminder) {
+    if (state.house.plan)
+      reminder.textContent =
+        "Yaad rahe: AI Studio mein apna floor plan sabse pehle upload karna — woh “Image 1” ban jata hai, tabhi layout sahi aayega.";
+    else
+      reminder.textContent =
+        "Floor plan abhi upload nahi hua. Step 2 (Rooms) mein plan upload karo, phir AI Studio mein use “Image 1” ke roop mein daalo — warna layout galat aa sakta hai.";
+  }
 }
 function buildEdit() {
   const items = $("#editChange")
@@ -1147,8 +1216,11 @@ $("#fileInput").addEventListener("change", (e) => {
 /* ---------- boot ---------- */
 function initAll() {
   if (!state.camera) state.camera = CAMERA;
+  if (!state.aspect) state.aspect = "landscape";
   if (state.house.area === undefined) state.house.area = "";
   if (state.house.plan === undefined) state.house.plan = "";
+  $("#aspect").value = state.aspect || "landscape";
+  if (state.bible.wall === undefined) state.bible.wall = "";
   state.bible.customColors = state.bible.customColors || [];
   state.bible.customAvoid = state.bible.customAvoid || [];
   state.bible.customLights = state.bible.customLights || [];

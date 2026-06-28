@@ -45,8 +45,14 @@
       </div>
 
       <div class="card">
-        <h3>Kaunse colours pasand hain?</h3>
-        <p class="sub">3–4 tap karo. (Tap the colours you like)</p>
+        <h3>Deewaron ka rang?</h3>
+        <p class="sub">Background wall colour — ek tap karo (ya khaali chhod do, designer khud decide karega). (Tap one wall colour, optional)</p>
+        <div class="chips" id="wallChips"></div>
+      </div>
+
+      <div class="card">
+        <h3>Aur kaunse colours? <span style="font-weight:400;color:var(--ink-soft);font-size:13px">(accents &amp; aesthetics)</span></h3>
+        <p class="sub">Furniture, decor aur accents ke liye 2–3 tap karo. (Tap accent colours you like)</p>
         <div class="chips" id="colorChips"></div>
         <div class="addcustom">
           <input type="color" id="cc_pick" value="#88a0b8" title="Colour chuno">
@@ -55,6 +61,7 @@
           <button class="btn small" id="cc_add">Add colour</button>
           <span class="addmsg" id="cc_msg"></span>
         </div>
+        <p class="sub" style="margin:10px 0 0">Apna colour add karoge to woh dono jagah (wall + accents) dikhega.</p>
       </div>
 
       <div class="card">
@@ -172,6 +179,13 @@
           <h3>Camera &amp; quality</h3>
           <div class="switchrow"><input type="checkbox" id="useCamera" checked><label for="useCamera" style="margin:0">Photo-quality camera settings lagao</label></div>
           <div class="switchrow"><input type="checkbox" id="useLock" checked><label for="useLock" style="margin:0">Layout lock karo (deewarein/khidkiyan na badlein)</label></div>
+          <div class="field" style="margin-top:6px"><label>Photo orientation <span class="hint">phone screenshot wala plan tall photo banata hai — isse wide rakho</span></label>
+            <select id="aspect">
+              <option value="landscape">Landscape — wide (recommended)</option>
+              <option value="portrait">Portrait — tall</option>
+              <option value="square">Square</option>
+            </select>
+          </div>
         </div>
 
         <div class="card output">
@@ -183,6 +197,7 @@
             <button class="btn small" id="logFresh">Save to this room</button>
             <span class="toast" id="freshToast">Copied — paste into AI Studio</span>
           </div>
+          <p class="sub" id="planReminder" style="margin:12px 0 0"></p>
         </div>
 
         <div class="card output">
