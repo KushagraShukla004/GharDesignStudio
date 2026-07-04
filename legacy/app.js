@@ -204,7 +204,7 @@ const DEFAULTS = {
       size: "11'4\" x 15'4\" (3.45 x 4.67 m)",
       windows: "",
       sun: "",
-      fixed: "Attached dress (5'4\"x8'8\"), toilet aur balcony saath mein",
+      fixed: "Attached L-shaped dress area (5'4\"x8'8\") ek wall par; balcony bilkul opposite wall par (dress aur balcony alag-alag, opposite deewaron par hain); toilet bhi saath mein. Sab plan ke hisaab se hi rakhna",
       reqs: ["wardrobe", "curtains", "softlight"],
       free: "Modern Ghar jesa feel",
       refs: [],
@@ -1014,7 +1014,14 @@ function buildFresh() {
         "Keep its exact shape, proportions, wall positions, door openings and window positions as drawn. " +
         "If the plan shows an attached dress area, toilet or balcony opening off this room, keep them exactly as drawn — " +
         "treat them as part of this room, do not turn them into separate rooms, and do not add, remove, merge or move any walls or spaces. " +
-        "If there is an attached dress area, angle the camera so its entrance/opening is visible in the frame. " +
+        "Critically, preserve the layout's orientation: do NOT flip, mirror or rotate the plan. " +
+        "Each attached space (especially the dress area) must stay on the SAME wall and side as drawn, " +
+        "in the same position relative to the bed, windows and door — if it opens off the left/right/far wall in the plan, " +
+        "it must appear on that exact same side in the render. " +
+        "Different attached spaces can sit on different — even opposite — walls: keep the dress area, toilet and balcony each on the wall the plan shows them, " +
+        "do not bunch them together or assume they are next to each other. " +
+        "Also reproduce each space's exact footprint/shape as drawn — if the dress area is L-shaped, render it L-shaped, not a plain rectangle. " +
+        "If there is an attached dress area, angle the camera so its entrance/opening is visible in the frame, on its correct wall. " +
         "Important: this floor plan is a flat top-down layout reference only — use it for room shape, walls and openings, " +
         "but do NOT copy its 2D look, orientation or aspect ratio into the result. Produce a normal eye-level interior photograph.",
     );

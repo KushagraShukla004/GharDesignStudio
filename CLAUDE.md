@@ -36,7 +36,7 @@ No bundler, no framework, no external JS deps. Only external resource is Google 
 > see Roadmap. Constraints 2–5 should survive the migration.
 
 ## Roadmap (planned, not built yet)
-Migrate to **Vite + React + TypeScript + Tailwind + Three.js.**
+Migrate to **Vite + React + TypeScript + Tailwind + framer motion + Three.js.**
 Goal: build a **live 3D mock model of the house** from the measurements entered in the form,
 showing **real-time changes for things chosen in the UI — wall colours and lighting (temperature
 / brightness)** — but **not** furniture/detailed objects. The 2D prompt-building workflow stays.

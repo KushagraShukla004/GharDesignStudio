@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    font-family: theme("fontFamily.sans");
+    color: theme("colors.ink");
+    background: theme("colors.paper");
+    color-scheme: dark; /* native selects, checkboxes, scrollbars render dark */
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  /* 16px inputs stop iOS from zooming on focus (<=760px) */
+  @media (max-width: 760px) {
+    input[type="text"],
+    textarea,
+    select {
+      font-size: 16px;
+    }
+  }
+}
+
+@layer components {
+  /* Dark prompt-output block */
+  .prompt-pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: theme("fontFamily.sans");
+    font-size: 13.5px;
+    line-height: 1.6;
+    background: #0d0c0a;
+    color: #efe9dc;
+    border: 1px solid #2a271f;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 0;
+    overflow: auto;
+  }
+  @media (max-width: 760px) {
+    .prompt-pre {
+      font-size: 13px;
+      padding: 16px;
+    }
+  }
+}
+
+/* Native color input chrome cleanup */
+input[type="color"] {
+  -webkit-appearance: none;
+  appearance: none;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 6px;
+}
